@@ -5,7 +5,10 @@ import java.io.Serializable;
 import org.apache.ignite.cache.query.annotations.QueryGroupIndex;
 import org.apache.ignite.cache.query.annotations.QuerySqlField;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
 /**
  * SQLQuery to create this table:
@@ -17,7 +20,10 @@ import lombok.Data;
  * CREATE INDEX STUDENT_IDX ON STUDENT (STUDENT_ID);
  * @author jcamargos
  */
-@Data
+@Accessors(chain = true)
+@Data    
+@NoArgsConstructor
+@AllArgsConstructor
 @QueryGroupIndex.List(@QueryGroupIndex(name = "idx1"))
 public class Student implements Serializable {
 

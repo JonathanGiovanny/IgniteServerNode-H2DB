@@ -2,6 +2,10 @@ package com.ignite;
 
 import java.sql.Types;
 
+import javax.cache.configuration.FactoryBuilder;
+
+import org.apache.ignite.Ignite;
+import org.apache.ignite.IgniteCache;
 import org.apache.ignite.Ignition;
 import org.apache.ignite.cache.CacheAtomicityMode;
 import org.apache.ignite.cache.store.jdbc.CacheJdbcPojoStoreFactory;
@@ -13,6 +17,7 @@ import org.apache.ignite.configuration.IgniteConfiguration;
 
 import com.ignite.model.Student;
 import com.ignite.persistence.H2DataSourceFactory;
+import com.ignite.store.StudentStore;
 
 /**
  * https://apacheignite.readme.io/docs/getting-started
@@ -20,6 +25,8 @@ import com.ignite.persistence.H2DataSourceFactory;
  * 
  * * Details of previous configurations on the IgniteServerNode project on my
  * github
+ * 
+ * STUDENT TABLE inserts on data.sql
  * 
  * @author jcamargos
  *
@@ -40,10 +47,16 @@ public class AppConfig {
 		// Enable export cache updates to the database
 		cacheConfig.setWriteThrough(true);
 
+//    	cacheConfig.setCacheStoreFactory(FactoryBuilder.<StudentStore>factoryOf(StudentStore.class));
+    
 		cacheConfig.setName("StudentCache");
 		cacheConfig.setAtomicityMode(CacheAtomicityMode.ATOMIC);
-		cacheConfig.setBackups(1);
+		cacheConfig.setBackups(0);
+		// https://codeahoy.com/2017/08/11/caching-strategies-and-how-to-choose-the-right-one/
+		// Write-Back = Write Behind: Write on cache, after delay, write on DB
+		cacheConfig.setWriteBehindEnabled(true);
 
+		// 
 		// DS Factory for the Caches
 		H2DataSourceFactory dsFactory = H2DataSourceFactory.getInstance();
 
@@ -55,9 +68,13 @@ public class AppConfig {
 		cacheConfig.setCacheStoreFactory(storeFactory);
 
 		// queryEntities on annotations over the Student class
+
 		igniteConfiguration.setCacheConfiguration(cacheConfig);
 
-		Ignition.start(igniteConfiguration);
+		Ignite ignite = Ignition.start(igniteConfiguration);
+		System.out.println("[IgniteServerNode] Node started");
+		IgniteCache<Long, Student> cache = ignite.getOrCreateCache("StudentCache");
+		cache.loadCache(null);
 	}
 
 	/**

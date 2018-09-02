@@ -52,16 +52,22 @@ public class AppConfig {
 			cacheConfig.setName("StudentCache");
 			cacheConfig.setAtomicityMode(CacheAtomicityMode.ATOMIC);
 			cacheConfig.setBackups(0);
+
 			// https://codeahoy.com/2017/08/11/caching-strategies-and-how-to-choose-the-right-one/
 			// Write-Back = Write Behind: Write on cache, after delay, write on DB
 			cacheConfig.setWriteBehindEnabled(true);
+			// https://apacheignite.readme.io/docs/3rd-party-store
+			// Size in memory before flush to DB
+			// cacheConfig.setWriteBehindFlushSize(256);
+			// Time before flush on DB
+			cacheConfig.setWriteBehindFlushFrequency(250);
 
 			// DS Factory for the Caches
 			H2DataSourceFactory dsFactory = H2DataSourceFactory.getInstance();
 
 			// Generates the types and entities for the cacheConfig
 			IgniteAutoConfig.loadConfiguration(Student.class);
-			
+
 			CacheJdbcPojoStoreFactory<Object, Object> storeFactory = new CacheJdbcPojoStoreFactory<>();
 			storeFactory.setDataSourceFactory(dsFactory);
 			storeFactory.setDialect(new H2Dialect());

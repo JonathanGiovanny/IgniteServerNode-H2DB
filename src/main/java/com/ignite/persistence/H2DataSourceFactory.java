@@ -19,6 +19,7 @@ public class H2DataSourceFactory implements Factory<DataSource> {
 
 	/** DB connection URL. */
 	private static final String DFLT_CONN_URL = "jdbc:h2:tcp://localhost/~/data/seviper";
+	//private static final String DFLT_CONN_URL = "jdbc:h2:file:/D:/data/seviper;FILE_LOCK=NO";
 	/** Instance */
 	private static H2DataSourceFactory instance;
 

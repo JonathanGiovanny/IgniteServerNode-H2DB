@@ -1,13 +1,9 @@
 package com.ignite;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
 import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteCache;
 import org.apache.ignite.Ignition;
 import org.apache.ignite.cache.CacheAtomicityMode;
-import org.apache.ignite.cache.QueryEntity;
 import org.apache.ignite.cache.store.jdbc.CacheJdbcPojoStoreFactory;
 import org.apache.ignite.cache.store.jdbc.dialect.H2Dialect;
 import org.apache.ignite.configuration.CacheConfiguration;
@@ -65,20 +61,18 @@ public class AppConfig {
 			// DS Factory for the Caches
 			H2DataSourceFactory dsFactory = H2DataSourceFactory.getInstance();
 
-			// Generates the types and entities for the cacheConfig
-			IgniteAutoConfig.loadConfiguration(Student.class);
+			// Add classes with ignite notation to process
+			IgniteAutoConfig.addClass(Student.class);
 
 			CacheJdbcPojoStoreFactory<Object, Object> storeFactory = new CacheJdbcPojoStoreFactory<>();
 			storeFactory.setDataSourceFactory(dsFactory);
 			storeFactory.setDialect(new H2Dialect());
-			storeFactory.setTypes(IgniteAutoConfig.getJDBCType());
+			storeFactory.setTypes(IgniteAutoConfig.getJDBCTypes());
 
 			cacheConfig.setCacheStoreFactory(storeFactory);
 
 			// Ignite notations over Apache Ignite
-			Collection<QueryEntity> entities = new ArrayList<>();
-			entities.add(IgniteAutoConfig.getQueryEntity());
-			cacheConfig.setQueryEntities(entities);
+			cacheConfig.setQueryEntities(IgniteAutoConfig.getQueryEntities());
 
 			igniteConfiguration.setCacheConfiguration(cacheConfig);
 

@@ -51,7 +51,7 @@
 
 		<dependency>
 		    <groupId>com.ignite</groupId>
-		    <artifactId>IgniteMapping</artifactId>
+		    <artifactId>IgniteAutoConfig</artifactId>
 		    <version>0.1</version>
 		</dependency>
 
